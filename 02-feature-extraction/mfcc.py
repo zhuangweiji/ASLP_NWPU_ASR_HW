@@ -103,8 +103,9 @@ def mel_to_linear_fre(mel):
         :returns: linear frequency
     """
     # May lead to RuntimeWarning: divide by zero encountered in log10(feats)
-    #return (700 * (np.power(10, (mel / 2595.) - 1)))
+    # return (700 * (np.power(10, (mel / 2595.) - 1)))
     return 700 * (10 ** (mel / 2595.) - 1)
+
 
 def fbank(spectrum, num_filter=num_filter):
     """Get mel filter bank feature from spectrum
@@ -137,7 +138,7 @@ def fbank(spectrum, num_filter=num_filter):
                     freq_bin[m + 1] - freq_bin[m])
     feats = np.dot(spectrum, feats)  # (356, 257),(257, 23)
     # if features == 0: features = epsional
-    #feats = np.where(feats <= 0, np.finfo(float).eps, feats)
+    # feats = np.where(feats <= 0, np.finfo(float).eps, feats)
     feats = 20 * np.log10(feats)
     return feats
 
