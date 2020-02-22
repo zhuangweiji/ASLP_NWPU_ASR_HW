@@ -1,5 +1,3 @@
 # .ignore
-*.png
-test.fbank
-test.mfcc
+
 .idea
