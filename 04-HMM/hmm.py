@@ -1,4 +1,6 @@
 # Author: Kaituo Xu, Fan Yu
+import numpy as np
+
 
 def forward_algorithm(O, HMM_model):
     """HMM Forward Algorithm.
@@ -13,9 +15,19 @@ def forward_algorithm(O, HMM_model):
     N = len(pi)
     prob = 0.0
     # Begin Assignment
-
-    # Put Your Code Here
-
+    # Initialize
+    alpha = np.zeros([T, N])
+    for i in range(N):
+        alpha[0][i] = pi[i]
+    # recursive
+    for t in range(T):
+        for i in range(N):
+            for j in range(N):
+                alpha[t][i] += alpha[t - 1][j] * A[j][i]
+        alpha[t][i] *= B[i][O[t]]
+    # end
+    for i in range(N):
+        prob += alpha[T - 1][i]
     # End Assignment
     return prob
 
@@ -38,7 +50,7 @@ def backward_algorithm(O, HMM_model):
 
     # End Assignment
     return prob
- 
+
 
 def Viterbi_algorithm(O, HMM_model):
     """Viterbi decoding.
@@ -62,7 +74,7 @@ def Viterbi_algorithm(O, HMM_model):
 
 
 if __name__ == "__main__":
-    color2id = { "RED": 0, "WHITE": 1 }
+    color2id = {"RED": 0, "WHITE": 1}
     # model parameters
     pi = [0.2, 0.4, 0.4]
     A = [[0.5, 0.2, 0.3],
@@ -81,5 +93,5 @@ if __name__ == "__main__":
     observ_prob_backward = backward_algorithm(observations, HMM_model)
     print(observ_prob_backward)
 
-    best_prob, best_path = Viterbi_algorithm(observations, HMM_model) 
+    best_prob, best_path = Viterbi_algorithm(observations, HMM_model)
     print(best_prob, best_path)
