@@ -18,13 +18,13 @@ def forward_algorithm(O, HMM_model):
     # Initialize
     alpha = np.zeros([T, N])
     for i in range(N):
-        alpha[0][i] = pi[i]
-    # recursive
-    for t in range(T):
+        alpha[0][i] = pi[i] * B[i][O[0]]
+    # Induction
+    for t in range(1, T):
         for i in range(N):
             for j in range(N):
                 alpha[t][i] += alpha[t - 1][j] * A[j][i]
-        alpha[t][i] *= B[i][O[t]]
+            alpha[t][i] *= B[i][O[t]]
     # end
     for i in range(N):
         prob += alpha[T - 1][i]
@@ -45,9 +45,17 @@ def backward_algorithm(O, HMM_model):
     N = len(pi)
     prob = 0.0
     # Begin Assignment
-
-    # Put Your Code Here
-
+    beta = np.zeros([T, N])
+    for i in range(N):
+        beta[T - 1][i] = 1  # t = 2
+    # Induction
+    for t in range(T - 2, -1, -1):  # t = 1, 0
+        for i in range(N):
+            for j in range(N):
+                beta[t][i] += A[i][j] * B[j][O[t + 1]] * beta[t + 1][j]
+    # end
+    for i in range(N):
+        prob += pi[i] * B[i][O[0]] * beta[0][i]
     # End Assignment
     return prob
 
@@ -64,11 +72,30 @@ def Viterbi_algorithm(O, HMM_model):
     pi, A, B = HMM_model
     T = len(O)
     N = len(pi)
-    best_prob, best_path = 0.0, []
+    best_prob, best_path = 0.0, [0] * T
     # Begin Assignment
-
-    # Put Your Code Here
-
+    # Initialize
+    delta = -np.inf * np.ones([T, N])
+    for i in range(N):
+        delta[0][i] = pi[i] * B[i][O[0]]
+    phi = [[0] * T] * N
+    # Induction
+    for t in range(1, T):
+        for i in range(N):
+            for j in range(N):
+                max_tmp = delta[t - 1][j] * A[j][i]
+                if max_tmp > delta[t][i]:
+                    delta[t][i] = max_tmp
+                    phi[t][i] = j + 1
+            delta[t][i] *= B[i][O[t]]
+    # Termination
+    for i in range(N):
+        if delta[T - 1][i] > best_prob:
+            best_prob = delta[T - 1][i]
+            best_path[T - 1] = i + 1  # t = 2
+    # Backtrack
+    for t in range(T - 2, -1, -1):  # t = 1, 0
+        best_path[t] = phi[t + 1][best_path[t + 1] - 1]
     # End Assignment
     return best_prob, best_path
 
