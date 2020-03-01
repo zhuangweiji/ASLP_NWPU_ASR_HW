@@ -12,5 +12,19 @@ You can find homework file for the asr course from here
 1、用python编程实现前向算法和后向算法。
 2、用python编程实现viterbi算法，求最优序列。
 
+## 05-GMM-HMM
+作业来源：哥伦比亚大学语音识别课程E6870
+难度系数：9 
+程序设计语言：C++ 
+预计花费时间：5~10个小时
+• 作业内容：
+  • Viterbi解码
+  • 估计GMM参数
+  • 前向后向训练，利用前向后向训练估计GMM参数 
+• 作业中的几个重要文件： 
+  • README.md: 如何安装、编译、填写代码、对比结果。
+  • lab2.pdf: 原始作业说明，需要细读。
+  • src: src目录下为源代码文件。
+  • lab2.txt: 提示思考的几个问题
 
 
