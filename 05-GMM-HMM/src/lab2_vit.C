@@ -114,6 +114,57 @@ double viterbi(const Graph& graph, const matrix<double>& gmmProbs,
   // DEBUG chart END
   // return 0.0;
 
+  // Initialize the chart
+  for (int frmIdx = 0; frmIdx <= frmCnt; ++frmIdx) {
+    for (int stateIdx = 0; stateIdx < stateCnt; ++stateIdx) {
+      chart(frmIdx, stateIdx).assign(g_zeroLogProb, -1);
+    }
+  }
+
+  // # Init
+  // t = 0, the probability in startState is log(1)
+  int startState = graph.get_start_state();
+  chart(0, startState).assign(log(1.0), -1); 
+  // t = 1;
+  int frmIdx = 1;  
+  int arcCnt = graph.get_arc_count(startState);
+  int curArcId = graph.get_first_arc_id(startState);
+  for (int arcIdx = 0; arcIdx < arcCnt; ++arcIdx) {
+    Arc arc;
+    int nextArcId = graph.get_arc(curArcId, arc);
+    int dstState = arc.get_dst_state();
+
+    double transProb = arc.get_log_prob();
+    double acousProb = gmmProbs(frmIdx - 1, arc.get_gmm());
+    double logProb = chart(frmIdx - 1, startState).get_log_prob()
+                   + transProb + acousProb;
+
+    chart(frmIdx, dstState).assign(logProb, curArcId);
+    curArcId = nextArcId;
+  }
+
+  // Induction
+  for (int frmIdx = 2; frmIdx <= frmCnt; ++frmIdx) {
+    for (int stateIdx = 0; stateIdx < stateCnt; ++stateIdx) {
+      int arcCnt = graph.get_arc_count(stateIdx);
+      int curArcId = graph.get_first_arc_id(stateIdx);
+      for (int arcIdx = 0; arcIdx < arcCnt; ++arcIdx) {
+        Arc arc;
+        int nextArcId = graph.get_arc(curArcId, arc);
+        int dstState = arc.get_dst_state();
+
+        double transProb = arc.get_log_prob();
+        double acousProb = gmmProbs(frmIdx - 1, arc.get_gmm());
+        double logProb = chart(frmIdx - 1, stateIdx).get_log_prob()
+                      + transProb + acousProb;
+
+        if (logProb > chart(frmIdx, dstState).get_log_prob()) {
+          chart(frmIdx, dstState).assign(logProb, curArcId);
+        }
+        curArcId = nextArcId;
+      }
+    }
+  }
   //  END_LAB
   //
 

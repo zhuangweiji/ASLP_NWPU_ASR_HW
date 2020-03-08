@@ -69,7 +69,34 @@ double forward_backward(const Graph& graph, const matrix<double>& gmmProbs,
   //  Fill in forward pass here.
 
   // Init chart
+  for(int frmIdx = 0; frmIdx<= frmCnt; ++frmIdx){
+    for(int stateIdx =0; stateIdx< stateCnt; ++stateIdx){
+      chart(frmIdx, stateIdx).set_forw_log_prob(g_zeroLogProb);
+      chart(frmIdx, stateIdx).set_back_log_prob(g_zeroLogProb);
+    }
+  }
+  int startState = graph.get_start_state();
+  chart(0, startState).set_forw_log_prob(0);
+
   // Recursive forward pass 
+  for (int frmIdx =1; frmIdx <= frmCnt; ++ frmIdx){
+    for (int stateIdx = 0; stateIdx <stateCnt; ++stateIdx){
+      int arcCnt = graph.get_arc_count(stateIdx);
+      int arcId = graph.get_first_arc_id(stateIdx);
+      for (int arcIdx = 0; arcIdx < arcCnt; ++arcIdx){
+        Arc arc;
+        arcId = graph.get_arc(arcId, arc);
+        int dstState = arc.get_dst_state();
+        double logProb = chart(frmIdx - 1, stateIdx).get_forw_log_prob()
+                       + arc.get_log_prob() 
+                       + gmmProbs(frmIdx - 1, arc.get_gmm());
+        logProb = add_log_probs(vector<double>{
+          logProb, chart(frmIdx, dstState).get_forw_log_prob()});
+        chart(frmIdx, dstState).set_forw_log_prob(logProb);
+       }
+    }
+  }
+
 
   // DEBUG forward
   // cout << "forward" << endl;
@@ -152,6 +179,30 @@ double forward_backward(const Graph& graph, const matrix<double>& gmmProbs,
   // }
   
   // Record posterior prob
+  for(int frmIdx = frmCnt; frmIdx>0; --frmIdx){
+    for(int stateIdx = 0; stateIdx < stateCnt; ++stateIdx){
+      int arcCnt = graph.get_arc_count(stateIdx);
+      int arcId = graph.get_first_arc_id(stateIdx);
+      for(int arcIdx = 0; arcIdx < arcCnt; ++arcIdx){
+        Arc arc;
+        arcId = graph.get_arc(arcId, arc);
+        int dstState = arc.get_dst_state();
+        // alpha(t-1, i) + a(i, j) + b(j, (ot)) + beta(t, j)
+        double forwdLogProb = chart(frmIdx - 1, stateIdx).get_forw_log_prob();
+        double transProb = arc.get_log_prob();
+        double gmmProb = gmmProbs(frmIdx - 1, arc.get_gmm());
+        double backLogProb = chart(frmIdx, dstState).get_back_log_prob();
+        double logProb = forwdLogProb
+                       + transProb 
+                       + gmmProb
+                       + backLogProb;
+        double arcPosterior = exp(logProb - uttLogProb);
+        gmmCountList.push_back(GmmCount(arc.get_gmm(), 
+                                        frmIdx - 1, 
+                                        arcPosterior));
+      }
+    }
+  }
   //  END_LAB
 
   return uttLogProb;

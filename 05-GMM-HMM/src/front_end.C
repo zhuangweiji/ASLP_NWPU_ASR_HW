@@ -156,7 +156,7 @@ void FrontEnd::do_melbin(const matrix<double>& in_feats,
   bool do_log = get_bool_param(params_, "melbin.log", true);
   //  Input samples per second.
   double sample_rate = get_float_param(params_, "window.sample_rate", 20000.0);
-  double sample_period = 1.0 / sample_rate;
+  //double sample_period = 1.0 / sample_rate;
 
   //  Retrieve number of frames and dimension of input feature vectors.
   int in_frame_cnt = in_feats.size1();
@@ -232,7 +232,7 @@ void FrontEnd::do_melbin(const matrix<double>& in_feats,
 
     for (size_t bin = 0; bin < mel_weights.size(); bin++) {
       double mel_energy = 0.0;
-      for (int f = 0; f < mel_weights[bin].size(); f++) {
+      for (unsigned int f = 0; f < mel_weights[bin].size(); f++) {
         mel_energy += mel_weights[bin][f] * energy[f];
       }
       if (do_log) {
