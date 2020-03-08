@@ -18,7 +18,11 @@
   they express the same set of models?  Can you think of any
   advantage one representation might have over the other?
 
-->
+-> 放在states上与放在arcs上是相等的。
+   放在states上是HMM的逻辑结构，更符合直觉，易于理解HMM状态之间的跳转关系。
+   放在arcs上是WFST格式的表示，WFST的node-id只是一个编号，信息都可以放在arcs上，
+   转移概率表示起来更方便，可以更清楚地看到从一个状态到另一状态的转移概率。
+   这两种表示是等效的，可以互相转换。
 
 
 * When doing isolated word recognition, one method is to compute the
@@ -29,7 +33,11 @@
   Are these methods equivalent (in terms of the answer selected)?
   Why or why not?
 
-->
+-> 识别结果是相等的。
+   前一种方法对每个数字建立一个HMM模型，每个HMM模型分别解码，选择得分最优的模型作为答案。
+   后一种方法是相当于把所有数字HMM模型并联到一起，用viterbi搜索一遍“one big HMM”就可以，
+   不使用剪枝算法的viterbi搜索可以确保求得的路径是最优路径。
+
 
 
 * To do the dynamic programming computation correctly, one must
@@ -53,7 +61,12 @@
   If there are skip arcs, under what conditions is the good ordering
   still valid?
 
-->
+->  (1)可以一直产生正确的结果。
+    由于语音帧与帧之间存在时序关系，因此要逐帧进行DP。
+    这样做可以确保在填充一个当前帧的cell时，该cell所依赖的所有上一帧的cell都已经计算完毕。​​
+    在本作业的"one big HMM"中，如果我们使用(2)，结果将是错误的，
+    因为有些依赖cell是负无穷（g_zeroLogProb）。
+    如果存在“skip arcs”，则需要有其它弧可以到达目标状态。
 
 
 * Create the file "p1b.out" by running:
@@ -91,13 +104,15 @@
   Explain how to compute the posterior count of each component Gaussian
   given the posterior count of the entire GMM.
 
-->
+-> 在给定整个GMM的后验计数的情况下计算每个分量高斯的后验计数。
+   可以用单个高斯分量的先验乘以该高斯分布的似然，再除以整个GMM的后验数
 
 
 * Given the total posterior counts of each Gaussian in a GMM, explain
   how to reestimate the mixture weights of each Gaussian in that GMM.
 
-->
+-> 将每个数据点的后验相加，然后除以数据点的总数， 
+   就可以获得该GMM中每个Gaussian的mixture weights。
 
 
 ########################################################################
