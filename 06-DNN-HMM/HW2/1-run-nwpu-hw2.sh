@@ -8,7 +8,7 @@
 
 # 1、修改实验路径，并行工作数
 H=`pwd`  #exp home
-n=40     #parallel jobs
+n=10     #parallel jobs
 
 # 2、修改数据路径
 #thchs=/nfs/public/materials/data/thchs30-openslr
@@ -109,7 +109,7 @@ steps/align_fmllr.sh --nj $n --cmd "$train_cmd" data/mfcc/dev data/lang exp/tri4
 #train dnn model
 local/nnet/run_dnn.sh --stage 0 --nj $n  exp/tri4b exp/tri4b_ali exp/tri4b_ali_cv || exit 1;
 
-# 15、训练噪自编码器（DAE，Denoising AutoEncoder）模型
+# 15、训练降噪自编码器（DAE，Denoising AutoEncoder）模型
 #train dae model
 #python2.6 or above is required for noisy data generation.
 #To speed up the process, pyximport for python is recommeded.
