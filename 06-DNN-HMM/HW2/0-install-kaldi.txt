@@ -1,0 +1,35 @@
+1. 从GitHub克隆kaldi,本地重命名为kaldi-master-cuda10.1
+cd ~/git
+git clone https://github.com/kaldi-asr/kaldi.git kaldi-master-cuda10.1
+cd kaldi-master-cuda10.1
+
+2.默认是master分支，可以选择稳定分支
+git branch --all
+#checkout远程的origin/5.4分支，在本地起名为5.4分支，并切换到本地的5.4分支
+git checkout -b 5.4 origin/5.4
+git branch
+
+3. 编译依赖tools
+cd tools 
+
+3.1 检查依赖是否满足： 
+extras/check_dependencies.sh 
+提示满足要求
+extras/check_dependencies.sh: all OK.
+
+3.2 安装其他依赖
+make -j 24
+
+3.3 安装srilm
+下载srilm：http://www.speech.sri.com/projects/srilm/download.html
+cp ~/tools/srilm/srilm-1.7.3.tar.gz srilm.tgz 
+extras/install_srilm.sh
+
+4. 编译src
+cd ../src
+./configure
+生成kaldi.mk ，编译
+make clean; make depend -j 24;make -j 24
+完成安装
+
+PS:下载kaldi和安装依赖包过程用国内网络访问速度很慢，最好配置一下网络代理

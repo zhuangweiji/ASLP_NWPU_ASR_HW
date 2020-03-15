@@ -43,30 +43,39 @@ class Layer:
 
 
 class ReLU(Layer):
+
     def forward(self, input):
         # BEGIN_LAB
+        return np.maximum(0, input)
         # END_LAB
 
     def backward(self, input, output, d_output):
         # BEGIN_LAB
+        d_output[(output <= 0)] = 0
+        return d_output
         # END_LAB
 
 
 class FullyConnect(Layer):
     def __init__(self, in_dim, out_dim):
         self.w = np.random.randn(out_dim, in_dim) * np.sqrt(2.0 / in_dim)
+        # self.w = np.random.randn(out_dim, in_dim)
         self.b = np.zeros(out_dim)
         self.dw = np.zeros((out_dim, in_dim))
         self.db = np.zeros(out_dim)
 
     def forward(self, input):
         # BEGIN_LAB
+        return np.dot(input, self.w.T) + self.b
         # END_LAB
 
     def backward(self, input, output, d_output):
         batch_size = input.shape[0]
         in_diff = None
         # BEGIN_LAB, compute in_diff/dw/db here
+        in_diff = np.dot(d_output, self.w)
+        self.dw = np.dot(d_output.T, input)
+        self.db = np.sum(d_output, axis=0)
         # END_LAB
         # Normalize dw/db by batch size
         self.dw = self.dw / batch_size
@@ -151,7 +160,7 @@ def train(dnn):
     inputs = inputs[permute]
     labels = labels[permute]
     num_epochs = 20
-    batch_size = 100
+    batch_size = 50
     for i in range(num_epochs):
         cur = 0
         while cur < num_samples:
@@ -185,17 +194,18 @@ def test(dnn):
         posterior = dnn.forward(mat)
         posterior = np.sum(posterior, axis=0) / float(mat.shape[0])
         predict = targets_list[np.argmax(posterior)]
-        if t == predict: correct += 1
+        if t == predict:
+            correct += 1
         print('label: {} predict: {}'.format(t, predict))
     print('Acc: {}'.format(float(correct) / total))
 
 
 def main():
-    np.random.seed(777)
+    np.random.seed(888)
     # We splice the raw feat with left 5 frames and right 5 frames
     # So the input here is 39 * (5 + 1 + 5) = 429
     dnn = DNN(429, 11, 128, 1)
-    dnn.set_learning_rate(1e-2)
+    dnn.set_learning_rate(0.3e-2)
     train(dnn)
     test(dnn)
 
