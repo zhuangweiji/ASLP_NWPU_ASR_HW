@@ -1,20 +1,9 @@
-# 第七章作业
-# 说明
-请根据"实验指导书.pdf":part2.2和part4分别完成N-gram计数和Witten-Bell算法的编写。
+# 作业1：利用上次作业下载的THCHS30数据，学习使用SRILM。
+1.使用SRILM获得经过interpolation式的Kneser-Ney平滑的3-gram以
+上的语言模型。总结你观察到的一些现象。
+2.使用SRILM计算在识别测试集上计算PPL。
 
-编译文件：Makefile
-
-# 提供的C++文件介绍：
-1. main.C：入口函数
-2. util.{H,C}:提供命令行解析，读取和写出数据等功能,不必仔细阅读，可以掠过。
-3. lang_model.{H,C}:LM类定义，本实验主要部分内容，需要完成.C文件中count_sentence_ngrams()和get_prob_witten_bell()函数。
-4. lab3_lm.{H,C}:语言模型实验的wrapper函数。
-
-# 数据文件：
-	字典：lab3.syms
-	训练集：minitrain.txt和minitrain2.txt
-	测试集：test1.txt和test2.txt
-
-# bash文件：
-	lab3_p1{a,b}.sh:测试N-gram计数
-	lab3_p3	{a,b}.sh：测试Witten-Bell smoothing算法
+# 作业2：[修改自哥伦比亚大学语音识别课程E6870的一部分]（阅读代码框架）
+1.实现N-gram计数 (实验指导书part 2.2)
+2.实现Witten-Bell smoothing部分(总结它的Intuition) (实验指导书
+part 4)

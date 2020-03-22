@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "lang_model.C": "cpp",
+        "lab3_lm.C": "cpp",
+        "main.C": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "initializer_list": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp"
+    }
+}
