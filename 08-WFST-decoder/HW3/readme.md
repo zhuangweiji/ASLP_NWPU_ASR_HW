@@ -1,4 +1,5 @@
 ## 作业 3：
+
 ### 0）运行 kaldi/egs/mini_librispeech 至少训练完 3 音素模型 tri1.
 cd ~/git/kaldi-master-cuda10.1/egs/mini_librispeech/s5
 ./run.sh
@@ -16,5 +17,5 @@ cd -
 ### 3）使用 1)中生成的 tglarge 的 G.fst 和 steps/lmrescore.sh 对exp/tri1/decode_nosp_tgsmall_dev_clean_2 中的 lattice 重打分，汇报 wer。
 steps/lmrescore.sh --cmd "utils/run.pl" data/lang_nosp_test_tgsmall data/lang_nosp_test_tglarge data/dev_clean_2 exp/tri1/decode_nosp_tgsmall_dev_clean_2 exp/tri1/decode_nosp_tglarge_dev_clean_2
 grep WER exp/tri1/decode_nosp_tglarge_dev_clean_2/wer* |utils/best_wer.sh
-
-
+#结果：
+#%WER 20.98 [ 4224 / 20138, 457 ins, 591 del, 3176 sub ] exp/tri1/decode_nosp_tglarge_dev_clean_2/wer_15_0.
